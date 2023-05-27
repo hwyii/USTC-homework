@@ -1,4 +1,3 @@
-# version saved
 import argparse
 import os
 import random
@@ -7,6 +6,7 @@ import time
 import warnings
 from enum import Enum
 from torch.utils.tensorboard import SummaryWriter
+
 import torch
 import torch.backends.cudnn as cudnn
 import torch.distributed as dist
@@ -28,7 +28,7 @@ model_names = sorted(name for name in models.__dict__
 
 parser = argparse.ArgumentParser(description='PyTorch ImageNet Training')
 parser.add_argument('data', metavar='DIR', nargs='?', default='tiny-imagenet-200',
-                    help='path to dataset (default: imagenet)') # Reset the data path
+                    help='path to dataset (default: tiny-imagenet-200)') # Reset the data path
 parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet18',
                     choices=model_names,
                     help='model architecture: ' +
@@ -36,7 +36,7 @@ parser.add_argument('-a', '--arch', metavar='ARCH', default='resnet18',
                         ' (default: resnet18)')
 parser.add_argument('-j', '--workers', default=4, type=int, metavar='N',
                     help='number of data loading workers (default: 4)')
-parser.add_argument('--epochs', default=20, type=int, metavar='N',
+parser.add_argument('--epochs', default=15, type=int, metavar='N',
                     help='number of total epochs to run')
 parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                     help='manual epoch number (useful on restarts)')
@@ -122,16 +122,17 @@ def main():
 
 def main_worker(gpu, ngpus_per_node, args):
     """
-    gpu: 当前进程使用的GPU编号
-    ngpus_per_node: 每个节点的GPU数量
+    gpu: GPU number used by the current process
+    ngpus_per_node: Number of GPUs per node
     """
     global best_acc1 # Track the best accuracy
     args.gpu = gpu
 
-    if args.gpu is not None: # 确定是否使用GPU进行训练
+    if args.gpu is not None: # Determines whether to use the GPU for training
         print("Use GPU: {} for training".format(args.gpu))
+    
 
-    if args.distributed: # 确定是否进行分布式训练
+    if args.distributed: # Determine whether to perform distributed training
         if args.dist_url == "env://" and args.rank == -1:
             args.rank = int(os.environ["RANK"])
         if args.multiprocessing_distributed:
@@ -150,6 +151,13 @@ def main_worker(gpu, ngpus_per_node, args):
 
     if not torch.cuda.is_available() and not torch.backends.mps.is_available():
         print('using CPU, this will be slow')
+        # Using tensorboard to draw graph of Resnet18
+        writer = SummaryWriter()
+        fake_img = torch.randn(1, 3, 64, 64)
+        writer.add_graph(model, fake_img)
+        writer.flush()
+        writer.close()
+
     elif args.distributed:
         # For multiprocessing distributed, DistributedDataParallel constructor
         # should always set the single device scope, otherwise,
@@ -204,7 +212,7 @@ def main_worker(gpu, ngpus_per_node, args):
     scheduler = StepLR(optimizer, step_size=30, gamma=0.1)
     
     # optionally resume from a checkpoint
-    # 加载之前保存的检查点文件，并从中恢复模型、优化器和学习率调度器的状态
+    
     if args.resume:
         if os.path.isfile(args.resume):
             print("=> loading checkpoint '{}'".format(args.resume))
@@ -280,7 +288,7 @@ def main_worker(gpu, ngpus_per_node, args):
         train(train_loader, model, criterion, optimizer, epoch, device, args)
 
         # evaluate on validation set
-        acc1 = validate(val_loader, model, criterion, args)
+        acc1 = validate(val_loader, model, criterion, args, epoch)
         
         scheduler.step()
         
@@ -301,8 +309,7 @@ def main_worker(gpu, ngpus_per_node, args):
 
 
 def train(train_loader, model, criterion, optimizer, epoch, device, args):
-    # Define AverageMeter/ProgressMeter辅助类和变量用于计算和显示
-    # 训练过程中的时间、数据加载时间、损失、准确率
+    
     train_writer = SummaryWriter(log_dir='logs/train')
     batch_time = AverageMeter('Time', ':6.3f')
     data_time = AverageMeter('Data', ':6.3f')
@@ -330,8 +337,15 @@ def train(train_loader, model, criterion, optimizer, epoch, device, args):
         output = model(images)
         loss = criterion(output, target)
 
+        writer1.add_scalar("Train loss", loss.item(), i + epoch * len(train_loader))
+        writer1.flush()
+
         # measure accuracy and record loss
         acc1, acc5 = accuracy(output, target, topk=(1, 5))
+        
+        writer2.add_scalar("Train accuracy", acc5[0], i + epoch* len(train_loader)) # acc5
+        writer2.flush()
+        
         losses.update(loss.item(), images.size(0))
         top1.update(acc1[0], images.size(0))
         top5.update(acc5[0], images.size(0))
@@ -347,12 +361,15 @@ def train(train_loader, model, criterion, optimizer, epoch, device, args):
 
         if i % args.print_freq == 0:
             progress.display(i + 1)
-        # 在每个训练步骤之后记录训练集的损失和准确率到TensorBoard
-        step = epoch * len(train_loader) + i
-        train_writer.add_scalar('Train/Loss', losses.avg, step)
-        train_writer.add_scalar('Train/Accuracy@1', top1.avg, step)
+        # Log training set loss and accuracy to TensorBoard after each training step
+        # step = epoch * len(train_loader) + i
+        train_writer.add_scalar('Train/Loss', losses.avg, epoch)
+        train_writer.add_scalar('Train/Accuracy@1', top1.avg, epoch)
+        train_writer.add_scalar('Train/Accuracy@5', top5.avg, epoch)
 
-def validate(val_loader, model, criterion, args):
+    train_writer.close()
+
+def validate(val_loader, model, criterion, args, epoch):
     val_writer = SummaryWriter(log_dir='logs/validation')
     def run_validate(loader, base_progress=0):
         with torch.no_grad():
@@ -371,8 +388,14 @@ def validate(val_loader, model, criterion, args):
                 output = model(images)
                 loss = criterion(output, target)
 
+                writer3.add_scalar("Val loss", loss.item(), i+ epoch * len(loader))
+                writer3.flush()
+
                 # measure accuracy and record loss
                 acc1, acc5 = accuracy(output, target, topk=(1, 5))
+                
+                writer4.add_scalar("Val accuracy", acc5[0], i+ epoch * len(loader))
+                writer4.flush()
                 losses.update(loss.item(), images.size(0))
                 top1.update(acc1[0], images.size(0))
                 top5.update(acc5[0], images.size(0))
@@ -411,7 +434,7 @@ def validate(val_loader, model, criterion, args):
         run_validate(aux_val_loader, len(val_loader))
  
     progress.display_summary()
-
+    val_writer.close()
     return top1.avg
 
 
@@ -517,4 +540,8 @@ def accuracy(output, target, topk=(1,)):
 
 
 if __name__ == '__main__':
+    writer1 = SummaryWriter(log_dir="/output/runs/train_loss")
+    writer2 = SummaryWriter(log_dir="/output/runs/train_acc5")
+    writer3 = SummaryWriter(log_dir="/output/runs/test_loss")
+    writer4 = SummaryWriter(log_dir="/output/runs/test_acc5")
     main()
