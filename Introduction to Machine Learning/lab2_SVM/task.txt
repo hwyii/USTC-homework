@@ -1,0 +1,64 @@
+为了简化实验，我们为你给出了函数 generate_data(dim, num) 去自由地生成数据. 这个数据是线性可分的，但是故意在标签值加上了一些错误。特征、标签以及错标率会由函数依次给出。
+
+你不需要去更改generate_data(dim, num).
+
+你需要去完成类 SVM1 和 SVM2 ，并且使用不同的算法去寻找支持向量机的解。 更具体地说，因为解决支持向量机的关键在于解决书本上的二次规划问题（6.6），你只需要使用两种不同的方法去解决（6.6）。剩下的部分，比如预测，内容可以相同。
+
+在完成了类方法的部分之后，你需要测试你代码的效率。比较应当包含以下内容：
+
+正确率，
+计算（训练）的时间消耗。
+如果可能的话，你可以使用 sklearn 与你的代码比较。如果比不过它，也是没事的。
+
+因为我们的数据是基于线性核生成的，你不需要尝试其他的核函数。但是你可以使用软间隔或者正则化等方法来提升你模型的能力。切记，这不是本实验的核心内容。
+
+记得添加你的错标率，它会由函数 generate_data 生成。
+
+
+ def fit2(self,X,y):
+        """
+        Choose the second alpha_j so that they have maximum interval.
+        """
+        self.args(X,y)
+        i = self.select_i(X,y) # 直接得到违背最大的i
+        ei = self.calculate_ei(i) # 对alpha_i得到ei
+        # 下面考虑违背KKT的情况（遍历得到，并不是违背程度最大的，需要改进）
+        if(self.y[i] * ei < -self.toler and self.alpha[i] < self.C) or (self.y[i] * ei > self.toler and self.alpha[i] > 0):
+            self.update(i) # 缓存
+            j,ej = self.select_j(i,ei) # 选择j并计算得到ej
+            # 已经选好i和j，下面进行更新
+            # old为更新前
+            alpha_i_old = self.alpha[i].copy()
+            alpha_j_old = self.alpha[j].copy()
+            # 对y[i]和y[j]是否相等进行讨论
+            if(self.y[i] != self.y[j]):
+                zeta = alpha_i_old - alpha_j_old
+                L = max(0,-zeta) # 下界
+                H = min(self.C,self.C - zeta) # 上界
+            else:
+                zeta = alpha_i_old + alpha_j_old
+                L = max(0,zeta - self.C)
+                H = min(zeta,self.C)
+            if L == H:
+                return 0
+            
+            eta = 2*self.K[i,j] - self.K[i,i] - self.K[j,j]
+            # 更新alpha_j
+            self.alpha[j] -= self.y[j] * (ei - ej)/eta
+            self.alpha[j] = self.clip_alpha(self.alpha[j],H,L)
+            self.update(j)
+            self.alpha[i] += self.y[i] * self.y[j] * (alpha_j_old - self.alpha[j])
+            self.update(i)
+
+            # 更新b
+            b1 = self.b - ei - self.y[i] * (self.alpha[i] - alpha_i_old) * self.K[i,i] - self.y[j] * self.K[i,j] * (self.alpha[j] - alpha_j_old)
+            b2 = self.b - ej - self.y[i] * (self.alpha[i] - alpha_i_old) * self.K[i,j] - self.y[j] * self.K[j,j] * (self.alpha[j] - alpha_j_old)
+            if L <= self.alpha[i] <= H:
+                self.b = b1
+            elif L <= self.alpha[j] <= H:
+                self.b = b2
+            else:
+                self.b = (b1 + b2) / 2.0
+            return 1
+        else:
+            return 0
