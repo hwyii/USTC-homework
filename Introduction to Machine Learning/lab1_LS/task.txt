@@ -1,0 +1,94 @@
+Deal with NULL rows, you can either choose to drop them or replace them with mean or other value   ok
+
+
+Encode categorical features 对分类特征编码 ok
+
+
+Split the dataset into X_train, X_test, y_train, y_test, also you can then use normalization or any other methods you want    ok
+
+
+Train your model and plot the loss curve of training ok
+
+
+Compare the accuracy(or other metrics you want) of test data with different parameters you train with, i.e. learning rate, regularization methods and parameters .etc
+
+
+# new
+    def loss(self,X,y,W):
+        num_sample = X.shape[0]
+        
+        X = X.T
+        X.loc['b'] = 1 #add a row
+
+        a = self.sigmoid(np.dot(W.T,X))
+        new_a = a.flatten()
+        #The cost function (on book)
+        
+        part1 = np.dot(y,np.log(new_a))
+        part2 = np.dot((1-y),np.log(1-new_a))
+        cost = -1*(part1 + part2)/num_sample
+        return cost
+
+    def gradient(self,X,y,W):
+        num_sample = X.shape[0]
+        X = X.T
+        X.loc['b'] = 1 #add a row
+
+        a = self.sigmoid(np.dot(W.T,X))
+        new_a = a.flatten()
+
+        grad = np.zeros(W.shape)
+        temp = (new_a - y).ravel()
+        for j in range(len(W.ravel())):
+            term = np.multiply(temp,X.iloc[j])
+            grad[j] = np.sum(term) / num_sample
+        dW = grad
+
+        return dW
+
+    def predict(self,X,W):
+        X = X.T
+        X.loc['b'] = 1 #add a row
+        a = self.sigmoid(np.dot(W.T,X))
+        return [1 if x > 0.5 else 0 for x in a]
+
+    def draw_loss(self,train_loss):
+        plt.plot(train_loss,c = 'b',label = 'train loss')
+        plt.xlabel('iternations')
+        plt.ylabel('loss')
+        plt.show()
+
+    def accuracy(self,real_val, predict_val):
+        correct = [1 if real_val[i] == predict_val[i] else 0 for i in range(len(real_val))]
+        return np.sum(correct) / len(real_val)
+
+    def train(self,X_train,y_train,batchSize,threshold,learning_rate):
+        batch = 0
+        epoch = 0
+
+        W = self.initialize_params(X_train.shape[1])
+        train_loss = [self.loss(X_train,y_train,W)]
+
+        grad = np.zeros(W.shape)
+
+        while True:
+            grad = self.gradient(X_train[batch:batch+batchSize],y_train[batch:batch+batchSize],W)
+
+            # 参数更新
+            W = W - learning_rate * grad
+            train_loss.append(self.loss(X_train,y_train,W))
+            epoch += 1
+
+            if epoch > threshold:
+                break;
+
+        self.draw_loss(train_loss)
+
+        print("the accuracy:",self.accuracy(y_train,self.predict(X_train,W)))
+
+        return W
+
+    def test(self,W,X_test,y_test):
+        test_predict = self.predict(X_test,W)
+
+        new_test_data = [[X_test[i].tolist(), test_predict[i]] for i in range(len(test_predict))]
