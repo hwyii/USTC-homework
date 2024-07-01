@@ -11,18 +11,23 @@ Including code for 5 labs, which is the most important part in this class. The l
 The task is to implement the paper by ourselves.
 - Comprehensive Experiment
 The task is to fully complete machine learning engineering, including feature engineering, model selection, model tuning.
+
 Attention: the dataset is invalid.
+
 2. **Deep Learning Basics** 2023 Spring
   
 Training Resnet18 and complete word level language. It is very basic.
+
 3. **Multivariate Analysis A** 2023 Fall
 
 Thanks to Professor Yang, Yaning, and one can refer to [Link](http://staff.ustc.edu.cn/~ynyang/vector/).
+
 4. **Time Series Analysis A** 2022 Fall
 
 5. **Regression Analysis** 2022 Fall
 
 Some materials for R and Python guidance. It is possible helpful for greenhand.
+
 6. **Applied Statistical Software** 2022 Spring
 
 7. **Data thinking** 2021 Fall
