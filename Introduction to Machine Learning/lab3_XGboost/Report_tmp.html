@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Report.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h2 id="report"><strong>Report</strong></h2>
+<hr>
+<h3 id="xgboost"><strong>XGBoost</strong></h3>
+<p>PB20051035贺维易</p>
+<h3 id="1%E5%AE%9E%E9%AA%8C%E5%8E%9F%E7%90%86"><strong>1.实验原理</strong></h3>
+<hr>
+<h4 id="11-%E7%90%86%E8%AE%BA%E6%8E%A8%E5%AF%BC"><strong>1.1 理论推导</strong></h4>
+<p>由于在任务文档里已经详细给出了XGBoost的实验原理，因此这里不再赘述。我们仅给出最优的权重和这棵决策树的得分：</p>
+<p>每个叶子结点的最优权重：
+$$
+w_j^{*} = -\frac{G_j}{H_j+\lambda}
+$$
+这棵决策树的得分：
+$$
+Obj = -\frac{1}{2} \sum_{j = 1}^{T} \frac{G_j^2}{H_j + \lambda} + \gamma T
+$$
+其中，$G_j$是叶子结点$j$所包含样本的一阶偏导数累加之和，$H_j$是叶子结点$j$所包含样本的二阶偏导数累加之和，$T$为叶子数。</p>
+<h4 id="12-%E5%81%9C%E6%AD%A2%E7%AD%96%E7%95%A5%E9%80%89%E6%8B%A9"><strong>1.2 停止策略选择</strong></h4>
+<p>对于如何决定一个节点是否还需要继续划分，我们设定如下的停止策略：</p>
+<ul>
+<li>设定树的最大深度阈值max_depth，如果树的深度大于阈值则停止划分；</li>
+<li>设定阈值min_child_sample，以限制划分后叶子结点的样本数不能小于这个值。</li>
+</ul>
+<p>对于整个算法如何终止，我们设定如下的停止策略：</p>
+<ul>
+<li>设定决策树的最大棵树$M$，使得算法在学习$M$棵决策树后停下来。</li>
+</ul>
+<h4 id="13-%E6%A0%91%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84"><strong>1.3 树的存储结构</strong></h4>
+<p>我们选用一个字典来存储每一棵树的结构。</p>
+<h3 id="2%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4"><strong>2.实验步骤</strong></h3>
+<hr>
+<ul>
+<li>读入数据并划分数据集</li>
+</ul>
+<p><strong>训练XGBoost模型</strong></p>
+<ul>
+<li>初始化预测值$\hat y$</li>
+<li>计算$G$和$H$</li>
+<li>根据$G$和$H$构建一棵新的决策树</li>
+<li>对预测值做出更新</li>
+<li>对以上步骤循环直到达到最大训练棵树</li>
+</ul>
+<p><strong>决策树构造过程</strong></p>
+<ul>
+<li>遍历所有特征及对应的划分点</li>
+<li>计算划分后的$G$和$H$</li>
+<li>计算划分后的增益变化并找到最大增益对应的划分点</li>
+<li>计算叶子最优权重</li>
+<li>记录树的结构并递归建树</li>
+</ul>
+<h3 id="3%E9%83%A8%E5%88%86%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><strong>3.部分代码实现</strong></h3>
+<hr>
+<ul>
+<li><strong>3.1切分数据集</strong></li>
+</ul>
+<p>选择75%作为训练集，25%作为测试集</p>
+<pre class="hljs"><code><div>row = df.shape[<span class="hljs-number">0</span>]
+col = df.shape[<span class="hljs-number">1</span>]
+k = int(<span class="hljs-number">0.75</span>*row)
+train = df[<span class="hljs-number">0</span>:k]
+test = df[k:row]
+X_train = train.iloc[:,<span class="hljs-number">0</span>:col<span class="hljs-number">-1</span>]
+y_train = train.iloc[:,col<span class="hljs-number">-1</span>]
+X_test = test.iloc[:,<span class="hljs-number">0</span>:col<span class="hljs-number">-1</span>]
+y_test = test.iloc[:,col<span class="hljs-number">-1</span>]
+</div></code></pre>
+<ul>
+<li><strong>3.2计算一阶和二阶偏导</strong></li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">_cal_grad</span><span class="hljs-params">(self, y_hat, Y)</span>:</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-number">2</span>* (y_hat - Y)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">_cal_hess</span><span class="hljs-params">(self,y_hat, Y)</span>:</span>
+        <span class="hljs-keyword">return</span> np.array([<span class="hljs-number">2</span>]*Y.shape[<span class="hljs-number">0</span>])
+</div></code></pre>
+<ul>
+<li><strong>3.3训练XGBoost模型</strong></li>
+</ul>
+<p>我们也绘制了Loss曲线。</p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">fit</span><span class="hljs-params">(self, X, Y)</span>:</span>
+    X = X.reset_index(drop=<span class="hljs-string">'True'</span>)
+    Y = Y.values
+    <span class="hljs-comment"># 将base_score设为Y的均值</span>
+    self.base_score = np.mean(Y)
+    y_hat = np.array([self.base_score]*Y.shape[<span class="hljs-number">0</span>])
+    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> range(self.M):
+            
+        X[<span class="hljs-string">'g'</span>] = self._cal_grad(y_hat, Y)
+        X[<span class="hljs-string">'h'</span>] = self._cal_hess(y_hat, Y)
+            
+        f_t = pd.Series([<span class="hljs-number">0</span>]*Y.shape[<span class="hljs-number">0</span>])
+        self.tree_structure[t+<span class="hljs-number">1</span>] = self._build_tree(X, f_t, <span class="hljs-number">1</span>)
+
+        y_hat = y_hat + f_t <span class="hljs-comment"># 对预测值更新</span>
+        error = np.sum((y_hat - Y)**<span class="hljs-number">2</span>)
+        error_table.append(error)
+        
+        <span class="hljs-keyword">if</span> self.plot:
+            <span class="hljs-keyword">from</span> matplotlib <span class="hljs-keyword">import</span> pyplot <span class="hljs-keyword">as</span> plt
+            plt.title(<span class="hljs-string">'error ratio of training'</span>)
+            plt.xlabel(<span class="hljs-string">'Tree Number'</span>)
+            plt.ylabel(<span class="hljs-string">'Error'</span>)
+            x = list(range(self.M+<span class="hljs-number">1</span>))
+            plt.plot(x, error_table)
+            plt.show()
+</div></code></pre>
+<ul>
+<li><strong>3.4构造决策树</strong></li>
+</ul>
+<p>我们将决策树的算法放入类XGBoost成为其中的一个函数，这只是为了调用时更为方便，事实上，决策树算法与XGBoost算法仍是明显区分开的。</p>
+<p>下面仅给出关键步骤：</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">for</span> feature <span class="hljs-keyword">in</span> [x <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> X.columns <span class="hljs-keyword">if</span> x <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> [<span class="hljs-string">'g'</span>,<span class="hljs-string">'h'</span>,<span class="hljs-string">'y'</span>]]: <span class="hljs-comment"># 遍历所有特征</span>
+    <span class="hljs-keyword">for</span> f_value <span class="hljs-keyword">in</span> list(set(X[feature])): <span class="hljs-comment"># 遍历对应特征的所有划分点</span>
+                
+        <span class="hljs-comment"># 如果分裂后左右样本数目都小于指定值则退出</span>
+        <span class="hljs-keyword">if</span> self.min_sample:
+            <span class="hljs-keyword">if</span> (X.loc[X[feature] &lt; f_value].shape[<span class="hljs-number">0</span>] &lt; self.min_sample)\
+                |(X.loc[X[feature] &gt;= f_value].shape[<span class="hljs-number">0</span>] &lt; self.min_sample):
+                <span class="hljs-keyword">continue</span>
+                
+        <span class="hljs-comment"># 计算划分后对应的一阶导和二阶导</span>
+        G_left = X.loc[X[feature] &lt; f_value,<span class="hljs-string">'g'</span>].sum()
+        G_right = X.loc[X[feature] &gt;= f_value,<span class="hljs-string">'g'</span>].sum()
+        H_left = X.loc[X[feature] &lt; f_value,<span class="hljs-string">'h'</span>].sum()
+        H_right = X.loc[X[feature] &gt;= f_value,<span class="hljs-string">'h'</span>].sum()
+               
+        <span class="hljs-comment"># 计算某次分裂带来的增益</span>
+        gain = G_left**<span class="hljs-number">2</span>/(H_left + self.lambd) + \
+                G_right**<span class="hljs-number">2</span>/(H_right + self.lambd) - \
+                (G_left + G_right)**<span class="hljs-number">2</span>/(H_left + H_right + self.lambd)
+        gain = gain/<span class="hljs-number">2</span> - self.gamma
+        <span class="hljs-keyword">if</span> gain &gt; max_gain:
+            best_feature, best_f_value = feature, f_value
+            max_gain = gain
+            G_left_best, G_right_best, H_left_best, H_right_best = G_left, G_right, H_left, H_right
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">_get_tree_node_w</span><span class="hljs-params">(self, X, tree, w)</span>:</span>
+    <span class="hljs-comment"># 把权重赋给w</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> tree <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+        k = list(tree.keys())[<span class="hljs-number">0</span>]
+        feat,f_value = k[<span class="hljs-number">0</span>],k[<span class="hljs-number">1</span>]
+        X_left = X.loc[X[feat] &lt; f_value]
+        id_left = X_left.index.tolist()
+        X_right = X.loc[X[feat] &gt;= f_value]
+        id_right = X_right.index.tolist()
+        <span class="hljs-keyword">for</span> kk <span class="hljs-keyword">in</span> tree[k].keys():
+            <span class="hljs-keyword">if</span> kk[<span class="hljs-number">0</span>] == <span class="hljs-string">'left'</span>:
+                tree_left = tree[k][kk]
+                w[id_left] = kk[<span class="hljs-number">1</span>]
+            <span class="hljs-keyword">elif</span> kk[<span class="hljs-number">0</span>] == <span class="hljs-string">'right'</span>:
+                tree_right = tree[k][kk]
+                w[id_right] = kk[<span class="hljs-number">1</span>]
+        
+            self._get_tree_node_w(X_left, tree_left, w)
+            self._get_tree_node_w(X_right, tree_right, w)
+</div></code></pre>
+<ul>
+<li><strong>3.5 Predict and Score</strong></li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">predict</span><span class="hljs-params">(self, X)</span>:</span>
+    X = X.reset_index(drop=<span class="hljs-string">'True'</span>)
+    Y = pd.Series([self.base_score]*X.shape[<span class="hljs-number">0</span>])
+
+    <span class="hljs-keyword">for</span> t <span class="hljs-keyword">in</span> range(self.M):
+        tree = self.tree_structure[t+<span class="hljs-number">1</span>]
+        y_hat = pd.Series([<span class="hljs-number">0</span>]*X.shape[<span class="hljs-number">0</span>]) <span class="hljs-comment"># 初始化</span>
+        Y = Y + y_hat
+            
+    <span class="hljs-keyword">return</span> Y
+
+y_pred = model.predict(X_test)
+delta = np.array(y_test) - np.array(y_pred)
+delta_norm = np.linalg.norm(delta)
+RMSE = delta_norm / sqrt(X_test.shape[<span class="hljs-number">0</span>])
+</div></code></pre>
+<h3 id="4%E5%AE%9E%E9%AA%8C%E7%BB%93%E6%9E%9C"><strong>4.实验结果</strong></h3>
+<hr>
+<ul>
+<li><strong>不同参数比较</strong></li>
+</ul>
+<p>75%训练集，25%测试集。</p>
+<p>$M$：树的棵数</p>
+<p>max_depth：树的最大深度</p>
+<table>
+<thead>
+<tr>
+<th>M</th>
+<th>max_depth</th>
+<th>lambda</th>
+<th>RMSE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>2</td>
+<td>1</td>
+<td>0.00025155</td>
+</tr>
+<tr>
+<td>5</td>
+<td>3</td>
+<td>1</td>
+<td>0.00021324</td>
+</tr>
+<tr>
+<td>5</td>
+<td>3</td>
+<td>0.1</td>
+<td>0.00021474</td>
+</tr>
+<tr>
+<td>10</td>
+<td>3</td>
+<td>1</td>
+<td>0.00019783</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Loss函数可视化</li>
+</ul>
+<p>我们仅展示最佳模型的Loss图像：</p>
+<p><img src="file:///d:/Study/MachineLearning/lab/images/6e1e2eca935b8d8dd80e3524ec7ad142ac1a52b824e036035c090511583a7835.png" alt="picture 2"></p>
+<h3 id="5%E5%AE%9E%E9%AA%8C%E5%88%86%E6%9E%90"><strong>5.实验分析</strong></h3>
+<ul>
+<li>当树的数量到达 5 棵时，实际上损失已经降到较小，此时增加树的棵数 loss 下降也不多。</li>
+<li>当对树的棵树、最大深度等参数调整时，RMSE变化较小，这可能是因 XGBoost 本身效果很好，对于树的各种属性的选择都能达到很好的结果，以至于RMSE相差极小，不过仍能看出当树的数量增加时将会有更好的效果。</li>
+</ul>
+
+</body>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ tex2jax: {inlineMath: [['$', '$']]}, messageStyle: "none" });</script>
+</html>
