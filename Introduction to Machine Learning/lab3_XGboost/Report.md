@@ -198,7 +198,8 @@ M | max_depth | lambda | RMSE
 我们仅展示最佳模型的Loss图像：
 
 
-![picture 2](../images/6e1e2eca935b8d8dd80e3524ec7ad142ac1a52b824e036035c090511583a7835.png)  
+![](https://raw.githubusercontent.com/hwyii/USTC-homework/main/Introduction%20to%20Machine%20Learning/images/XGBoost.png)
+  
 
 
 ### **5.实验分析**
