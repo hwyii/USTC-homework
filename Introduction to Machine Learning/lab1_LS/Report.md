@@ -1,8 +1,3 @@
-<script type="text/javascript" async
-  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-
-
 # **Machine Learning Lab1**
 
 Logistic Regression
@@ -11,7 +6,8 @@ By He Weiyi PB20051035
 
 ## **1 The loss curve of one train process**
 
-![](https://github.com/hwyii/USTC-homework/Introduction to Machine Learning/images/loss.png)
+![](https://raw.githubusercontent.com/hwyii/USTC-homework/main/Introduction%20to%20Machine%20Learning/images/loss.png)
+
 
 ## **2 The comparation table of different parameters**
 
